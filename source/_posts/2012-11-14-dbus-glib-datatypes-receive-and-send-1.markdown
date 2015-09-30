@@ -13,7 +13,7 @@ categories: dbus-glib
  - 能够熟练使用 C语言；
  - 了解 DBus 各数据类型的表示, 参考 [D-Bus Specification](http://dbus.freedesktop.org/doc/dbus-specification.html)
  - 对 DBus-glib 有基本的了解，能够与 DBus 服务进程进行简单的交互。
- - 简单使用 d-feet, 参考 [D-Bus 实例讲解](http://blog.csdn.net/fmddlmyy/article/details/3585730) 
+ - 简单使用 d-feet, 参考 [D-Bus 实例讲解](http://blog.csdn.net/fmddlmyy/article/details/3585730)
  - 大概对 Python 有些了解（只是为了说明我的分析思路，如果你只想找 C 的解决方法，那完全可以不了解）；
  - 简单了解 python dbus
 
@@ -22,7 +22,7 @@ categories: dbus-glib
 ## Python DBus 的简单演示
 ### Python DBus 服务进程
 使用 Python 编写 DBus 服务进程是比较舒心的一件事。那么废话不多说，先来一个 "1+1=2" 的例子
-{% include_code dbus/oneonetwo_service.py %} 
+{% include_code dbus/oneonetwo_service.py %}
 
 简单说明一下关键点：
 
@@ -32,7 +32,7 @@ categories: dbus-glib
  -  **object = Example(session_bus, '/airead/fan/Example')** 将定义的 **class Example** 注册到 DBus 上。
 
 ### 调用 DBus 服务进程的方法
-{% include_code dbus/oneonetwo_client.py %} 
+{% include_code dbus/oneonetwo_client.py %}
 看注释基本就可以了。
 
 给 .py 添加可执行权限，先运行 service ,再运行 client 看结果，记得开两个shell。
@@ -44,7 +44,7 @@ categories: dbus-glib
 
 ### Python DBus 测试代码
 {% include_code dbus/all_basic_data_deliver_client.py %}
-我还写了一个比较料的 shell 脚本用来全面的进行测试。 
+我还写了一个比较料的 shell 脚本用来全面的进行测试。
 {% include_code dbus/all_basic_data_deliver_test_py.sh %}
 
 ### 使用 C 实现基本数据类型的传递
@@ -109,7 +109,7 @@ int send_recv_byte(DBusGProxy *proxy, char *method, char *value)
         return -1;
     }
     printf("receive %c\n", ret);
-    
+
     return 0;
 }
 {% endcodeblock %}
@@ -135,7 +135,7 @@ int send_recv_double(DBusGProxy *proxy, char *method, char *value)
         return -1;
     }
     printf("receive %f\n", ret);
-    
+
     return 0;
 }
 
@@ -164,7 +164,7 @@ int send_recv_int32(DBusGProxy *proxy, char *method, char *value)
         return -1;
     }
     printf("receive %d\n", ret);
-    
+
     return 0;
 }
 {% endcodeblock %}
@@ -190,7 +190,7 @@ int send_recv_string(DBusGProxy *proxy, char *method, char *value)
         return -1;
     }
     printf("receive %s\n", ret);
-    
+
     return 0;
 }
 
@@ -218,7 +218,7 @@ int send_recv_objectpath(DBusGProxy *proxy, char *method, char *value)
     }
 
     printf("receive %s\n", ret);
-    
+
     return 0;
 }
 {% endcodeblock %}
@@ -245,7 +245,7 @@ int send_recv_signature(DBusGProxy *proxy, char *method, char *value)
         return -1;
     }
     printf("receive %s\n", ret);
-    
+
     return 0;
 }
 {% endcodeblock %}
@@ -254,42 +254,43 @@ int send_recv_signature(DBusGProxy *proxy, char *method, char *value)
 测试脚本：[**all_basic_data_deliver_client.c**](/downloads/code/dbus/all_basic_data_deliver_client.c)
 ## Makefile
 有些东西实际上没用，我也懒得去了。
-{% codeblock lang:make %}
-CC	= gcc
 
-CFLAGS	= -Wall -g
+{% codeblock lang:make %}
+CC  = gcc
+
+CFLAGS  = -Wall -g
 CFLAGS += $(shell pkg-config --cflags glib-2.0 )
 CFLAGS += $(shell pkg-config --cflags dbus-glib-1)
 #CFLAGS += $(shell pkg-config --cflags gtk+-2.0)
 
-LDFLAGS	= 
+LDFLAGS =
 LDFLAGS += $(shell pkg-config --libs glib-2.0)
 LDFLAGS += $(shell pkg-config --libs dbus-glib-1)
 #LDFLAGS += $(shell pkg-config --libs gtk+-2.0)
 
 SOURCE =  $(wildcard *.c)
-TARGETS	:= $(patsubst %.c, %, $(SOURCE))
+TARGETS := $(patsubst %.c, %, $(SOURCE))
 TARGETS_OUT = common_marshaler basic_data
 TARGETS := $(filter-out $(TARGETS_OUT), $(TARGETS))
 TARGETS := $(addsuffix .out, $(TARGETS))
 
 %.out: %.c
-	@echo CC $< -o $@
-	@$(CC) $< common_marshaler.c basic_data.c $(CFLAGS) -o $@ $(LDFLAGS)
+  @echo CC $< -o $@
+  @$(CC) $< common_marshaler.c basic_data.c $(CFLAGS) -o $@ $(LDFLAGS)
 
 .PHONY: all clean test marshaler
 
-all: $(TARGETS) 
+all: $(TARGETS)
 
-marshaler: 
-	glib-genmarshal --prefix _common_marshal --header common_marshaler.list > common_marshaler.h
-	glib-genmarshal --prefix _common_marshal --body common_marshaler.list > common_marshaler.c
-	dbus-binding-tool --prefix=airead_fan --mode=glib-server all_basic_data_deliver_server.xml > all_basic_data_deliver_server.h
+marshaler:
+  glib-genmarshal --prefix _common_marshal --header common_marshaler.list > common_marshaler.h
+  glib-genmarshal --prefix _common_marshal --body common_marshaler.list > common_marshaler.c
+  dbus-binding-tool --prefix=airead_fan --mode=glib-server all_basic_data_deliver_server.xml > all_basic_data_deliver_server.h
 
 clean:
-	rm -f *~ a.out *.o $(TARGETS) core.*
+  rm -f *~ a.out *.o $(TARGETS) core.*
 
 test:
-	@echo TARGETS: $(TARGETS)
+  @echo TARGETS: $(TARGETS)
 
-{% endcodeblock lang:make %}
+{% endcodeblock %}
