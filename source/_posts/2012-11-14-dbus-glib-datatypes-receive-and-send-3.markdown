@@ -10,7 +10,7 @@ categories: dbus-glib
 
 同样先给出 Python 编写的服务与测试
 <!--more-->
-## Python DBus 服务进程  
+## Python DBus 服务进程
 {% include_code dbus/more_advanced_data_deliver_service.py %}
 
 ## Python 测试服务
@@ -37,7 +37,7 @@ int send_recv_struct_array(DBusGProxy *proxy)
     GError *error = NULL;
     GPtrArray *gparray, *ret;
     GValueArray *garray[3], *tmp_garray;
-    GValue gval[3][2] = {{{0}}};
+    GValue gval[3][2] = { { {0} } };
     GValue *tmp_gval;
     gchar *str[3] = {"apple", "banana", "cherry"};
     gint num[3] = {1, 2, 5};
@@ -49,7 +49,7 @@ int send_recv_struct_array(DBusGProxy *proxy)
         g_value_init (&gval[i][1], G_TYPE_INT);
         g_value_set_int(&gval[i][1], num[i]);
     }
-    
+
     gparray = g_ptr_array_new();
     for (i = 0; i < 3; i++) {
         garray[i] = g_value_array_new(0);
@@ -107,7 +107,7 @@ int send_recv_dictdict(DBusGProxy *proxy)
 
     for (i = 0; i < 2; i++) {
         g_value_init(&gval[i], DBUS_TYPE_G_STRING_STRING_HASHTABLE);
-        g_value_take_boxed(&gval[i], 
+        g_value_take_boxed(&gval[i],
                            dbus_g_type_specialized_construct(
                                DBUS_TYPE_G_STRING_STRING_HASHTABLE));
         subtable = g_value_get_boxed(&gval[i]);
