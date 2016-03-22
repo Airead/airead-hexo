@@ -7,7 +7,6 @@
     <title>乘法表</title>
     <style type="text/css">
         table {
-            height: 300px;
             border-collapse: collapse;
         }
 
@@ -33,8 +32,9 @@
     <script type="text/javascript">
         var query = getQuery();
         var num = parseInt(query.num) || 9;
+        var tableWidth = 130 * num;
 
-        document.write("<table>");
+        document.write("<table width=" + tableWidth + ">");
         var str = [num, num].join('x');
         document.write("<h1>" + str + "</h1>");
         for (var x = 1; x <= num; x++) {
